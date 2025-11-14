@@ -14,6 +14,7 @@ Singleton {
     property int updateInterval: refCount > 0 ? 3000 : 30000
     property bool isUpdating: false
     property bool dgopAvailable: false
+    property int tempHistoryMaxSize: 7200 // 6 hours at 3s intervals
 
     property var moduleRefCounts: ({})
     property var enabledModules: []
@@ -76,6 +77,8 @@ Singleton {
     property int historySize: 60
     property var cpuHistory: []
     property var memoryHistory: []
+    property var cpuTempHistory: []
+    property var gpuTempHistory: []
     property var networkHistory: ({
                                       "rx": [],
                                       "tx": []
@@ -304,6 +307,7 @@ Singleton {
             cpuModel = cpu.model || ""
             perCoreCpuUsage = cpu.coreUsage || []
             addToHistory(cpuHistory, cpuUsage)
+            addToHistory(cpuTempHistory, cpuTemperature, tempHistoryMaxSize)
 
             if (cpu.cursor) {
                 cpuCursor = cpu.cursor
@@ -427,6 +431,10 @@ Singleton {
                     }
                 }
                 availableGpus = updatedGpus
+                // Track primary GPU temperature for history
+                if (updatedGpus.length > 0) {
+                    addToHistory(gpuTempHistory, updatedGpus[0].temperature || 0, tempHistoryMaxSize)
+                }
             } else {
                 // This is initial GPU metadata - set the full list
                 const gpuList = []
@@ -444,6 +452,10 @@ Singleton {
                                  })
                 }
                 availableGpus = gpuList
+                // Track primary GPU temperature for history
+                if (gpuList.length > 0) {
+                    addToHistory(gpuTempHistory, gpuList[0].temperature || 0, tempHistoryMaxSize)
+                }
             }
         }
 
@@ -468,9 +480,10 @@ Singleton {
         isUpdating = false
     }
 
-    function addToHistory(array, value) {
+    function addToHistory(array, value, maxSize) {
         array.push(value)
-        if (array.length > historySize) {
+        const limit = maxSize !== undefined ? maxSize : historySize
+        if (array.length > limit) {
             array.shift()
         }
     }

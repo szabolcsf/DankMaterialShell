@@ -10,7 +10,7 @@ BasePill {
 
     property bool showPercentage: true
     property bool showIcon: true
-    property var toggleProcessList
+    property var toggleTempHistory
     property var popoutTarget: null
     property var widgetData: null
     property bool minimumWidth: (widgetData && widgetData.minimumWidth !== undefined) ? widgetData.minimumWidth : true
@@ -131,9 +131,8 @@ BasePill {
                 const pos = SettingsData.getPopupTriggerPosition(globalPos, currentScreen, barThickness, root.visualWidth)
                 popoutTarget.setTriggerPosition(pos.x, pos.y, pos.width, section, currentScreen)
             }
-            DgopService.setSortBy("cpu");
-            if (popoutTarget) {
-                PopoutManager.requestPopout(popoutTarget, undefined, "cpu_temp");
+            if (root.toggleTempHistory) {
+                root.toggleTempHistory("cpu");
             }
         }
     }

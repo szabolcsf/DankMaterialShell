@@ -329,6 +329,20 @@ Item {
         }
     }
 
+    LazyLoader {
+        id: tempHistoryPopoutLoader
+
+        active: false
+
+        TemperatureHistoryPopout {
+            id: tempHistoryPopout
+
+            Component.onCompleted: {
+                PopoutService.tempHistoryPopout = tempHistoryPopout
+            }
+        }
+    }
+
     SettingsModal {
         id: settingsModal
 
@@ -462,10 +476,6 @@ Item {
                                         }
                                     }
 
-            onLockRequested: {
-                lock.activate()
-            }
-
             function actionApply(action) {
                 switch (action) {
                 case "logout":
@@ -497,11 +507,11 @@ Item {
 
         active: false
 
-        KeybindsModal {
-            id: keybindsModal
+        HyprKeybindsModal {
+            id: hyprKeybindsModal
 
             Component.onCompleted: {
-                PopoutService.hyprKeybindsModal = keybindsModal
+                PopoutService.hyprKeybindsModal = hyprKeybindsModal
             }
         }
     }
