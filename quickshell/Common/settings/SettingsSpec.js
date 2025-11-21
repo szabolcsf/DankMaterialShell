@@ -18,6 +18,7 @@ var SPEC = {
     dockTransparency: { def: 1.0, coerce: percentToUnit },
 
     widgetBackgroundColor: { def: "sch" },
+    widgetColorMode: { def: "default" },
     cornerRadius: { def: 12, onChange: "updateNiriLayout" },
 
     use24HourClock: { def: true },
@@ -97,6 +98,7 @@ var SPEC = {
     spotlightModalViewMode: { def: "list" },
     sortAppsAlphabetically: { def: false },
     appLauncherGridColumns: { def: 4 },
+    spotlightCloseNiriOverview: { def: true },
 
     weatherLocation: { def: "New York, NY" },
     weatherCoordinates: { def: "40.7128,-74.0060" },

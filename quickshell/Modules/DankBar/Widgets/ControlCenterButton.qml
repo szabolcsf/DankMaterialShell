@@ -85,7 +85,7 @@ BasePill {
                             return "volume_up"
                         }
                         size: Theme.barIconSize(root.barThickness)
-                        color: Theme.surfaceText
+                        color: Theme.widgetIconColor
                         anchors.centerIn: parent
                     }
 
@@ -104,6 +104,7 @@ BasePill {
                             if (AudioService.sink && AudioService.sink.audio) {
                                 AudioService.sink.audio.muted = false
                                 AudioService.sink.audio.volume = newVolume / 100
+                                AudioService.playVolumeChangeSoundIfEnabled()
                             }
                             wheelEvent.accepted = true
                         }
@@ -113,7 +114,7 @@ BasePill {
                 DankIcon {
                     name: "settings"
                     size: Theme.barIconSize(root.barThickness)
-                    color: root.isActive ? Theme.primary : Theme.surfaceText
+                    color: root.isActive ? Theme.primary : Theme.widgetIconColor
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: !root.showNetworkIcon && !root.showBluetoothIcon && !root.showAudioIcon
                 }
@@ -189,7 +190,7 @@ BasePill {
                             return "volume_up";
                         }
                         size: Theme.barIconSize(root.barThickness)
-                        color: Theme.surfaceText
+                        color: Theme.widgetIconColor
                         anchors.centerIn: parent
                     }
 
@@ -210,6 +211,7 @@ BasePill {
                             if (AudioService.sink && AudioService.sink.audio) {
                                 AudioService.sink.audio.muted = false;
                                 AudioService.sink.audio.volume = newVolume / 100;
+                                AudioService.playVolumeChangeSoundIfEnabled();
                             }
                             wheelEvent.accepted = true;
                         }
@@ -227,7 +229,7 @@ BasePill {
                 DankIcon {
                     name: "settings"
                     size: Theme.barIconSize(root.barThickness)
-                    color: root.isActive ? Theme.primary : Theme.surfaceText
+                    color: root.isActive ? Theme.primary : Theme.widgetIconColor
                     anchors.verticalCenter: parent.verticalCenter
                     visible: !root.showNetworkIcon && !root.showBluetoothIcon && !root.showAudioIcon
                 }
