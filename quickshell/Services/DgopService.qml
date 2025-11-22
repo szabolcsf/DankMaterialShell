@@ -306,8 +306,8 @@ Singleton {
             cpuCores = cpu.count || 1
             cpuModel = cpu.model || ""
             perCoreCpuUsage = cpu.coreUsage || []
-            addToHistory(cpuHistory, cpuUsage)
-            addToHistory(cpuTempHistory, cpuTemperature, tempHistoryMaxSize)
+            cpuHistory = addToHistory(cpuHistory, cpuUsage)
+            cpuTempHistory = addToHistory(cpuTempHistory, cpuTemperature, tempHistoryMaxSize)
 
             if (cpu.cursor) {
                 cpuCursor = cpu.cursor
@@ -331,7 +331,7 @@ Singleton {
             totalSwapKB = mem.swaptotal || 0
             usedSwapKB = (mem.swaptotal || 0) - (mem.swapfree || 0)
 
-            addToHistory(memoryHistory, memoryUsage)
+            memoryHistory = addToHistory(memoryHistory, memoryUsage)
         }
 
         if (data.network && Array.isArray(data.network)) {
@@ -350,8 +350,8 @@ Singleton {
                 const txDiff = totalTx - lastNetworkStats.tx
                 networkRxRate = Math.max(0, rxDiff / timeDiff)
                 networkTxRate = Math.max(0, txDiff / timeDiff)
-                addToHistory(networkHistory.rx, networkRxRate / 1024)
-                addToHistory(networkHistory.tx, networkTxRate / 1024)
+                networkHistory.rx = addToHistory(networkHistory.rx, networkRxRate / 1024)
+                networkHistory.tx = addToHistory(networkHistory.tx, networkTxRate / 1024)
             }
             lastNetworkStats = {
                 "rx": totalRx,
@@ -375,8 +375,8 @@ Singleton {
                 const writeDiff = totalWrite - lastDiskStats.write
                 diskReadRate = Math.max(0, readDiff / timeDiff)
                 diskWriteRate = Math.max(0, writeDiff / timeDiff)
-                addToHistory(diskHistory.read, diskReadRate / (1024 * 1024))
-                addToHistory(diskHistory.write, diskWriteRate / (1024 * 1024))
+                diskHistory.read = addToHistory(diskHistory.read, diskReadRate / (1024 * 1024))
+                diskHistory.write = addToHistory(diskHistory.write, diskWriteRate / (1024 * 1024))
             }
             lastDiskStats = {
                 "read": totalRead,
@@ -433,7 +433,7 @@ Singleton {
                 availableGpus = updatedGpus
                 // Track primary GPU temperature for history
                 if (updatedGpus.length > 0) {
-                    addToHistory(gpuTempHistory, updatedGpus[0].temperature || 0, tempHistoryMaxSize)
+                    gpuTempHistory = addToHistory(gpuTempHistory, updatedGpus[0].temperature || 0, tempHistoryMaxSize)
                 }
             } else {
                 // This is initial GPU metadata - set the full list
@@ -454,7 +454,7 @@ Singleton {
                 availableGpus = gpuList
                 // Track primary GPU temperature for history
                 if (gpuList.length > 0) {
-                    addToHistory(gpuTempHistory, gpuList[0].temperature || 0, tempHistoryMaxSize)
+                    gpuTempHistory = addToHistory(gpuTempHistory, gpuList[0].temperature || 0, tempHistoryMaxSize)
                 }
             }
         }
@@ -481,11 +481,14 @@ Singleton {
     }
 
     function addToHistory(array, value, maxSize) {
-        array.push(value)
+        // Create a new array to trigger QML property change notification
+        const newArray = array.slice()
+        newArray.push(value)
         const limit = maxSize !== undefined ? maxSize : historySize
-        if (array.length > limit) {
-            array.shift()
+        if (newArray.length > limit) {
+            newArray.shift()
         }
+        return newArray
     }
 
     function getProcessIcon(command) {
@@ -599,8 +602,8 @@ Singleton {
         command: root.buildDgopCommand()
         running: false
         onCommandChanged: {
-
-            //console.log("DgopService command:", JSON.stringify(command))
+            // Uncomment for debugging:
+            // console.log("DgopService command:", JSON.stringify(command))
         }
         onExited: exitCode => {
             if (exitCode !== 0) {

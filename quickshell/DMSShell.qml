@@ -507,7 +507,7 @@ Item {
 
         active: false
 
-        HyprKeybindsModal {
+        KeybindsModal {
             id: hyprKeybindsModal
 
             Component.onCompleted: {
